@@ -1,0 +1,37 @@
+# .dockerignore file - giúp giảm kích thước Docker image
+
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+test
+.test
+coverage
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Misc
+README.md
+LICENSE
+CHANGELOG.md

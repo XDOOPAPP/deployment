@@ -1,0 +1,156 @@
+version: "3.8"
+
+services:
+  api-gateway:
+    build:
+      context: ../api-gateway
+      dockerfile: Dockerfile
+    container_name: fepa-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - AUTH_SERVICE_HOST=auth-service
+      - AUTH_SERVICE_PORT=3001
+      - EXPENSE_SERVICE_HOST=expense-service
+      - EXPENSE_SERVICE_PORT=3002
+      - BUDGET_SERVICE_HOST=budget-service
+      - BUDGET_SERVICE_PORT=3003
+      - BLOG_SERVICE_HOST=blog-service
+      - BLOG_SERVICE_PORT=3004
+      - SUBSCRIPTION_SERVICE_HOST=subscription-service
+      - SUBSCRIPTION_SERVICE_PORT=3005
+      - NOTIFICATION_SERVICE_HOST=notification-service
+      - NOTIFICATION_SERVICE_PORT=3006
+      - OCR_SERVICE_HOST=ocr-service
+      - OCR_SERVICE_PORT=3007
+      - AI_SERVICE_HOST=ai-service
+      - AI_SERVICE_PORT=3008
+    depends_on:
+      - auth-service
+      - expense-service
+      - budget-service
+      - blog-service
+      - subscription-service
+      - notification-service
+      - ocr-service
+      - ai-service
+    networks:
+      - fepa-network
+
+  auth-service:
+    build:
+      context: ../auth-service
+      dockerfile: Dockerfile
+    container_name: fepa-auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3001
+      - HTTP_PORT=4001
+    networks:
+      - fepa-network
+
+  expense-service:
+    build:
+      context: ../expense-service
+      dockerfile: Dockerfile
+    container_name: fepa-expense-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3002
+      - HTTP_PORT=4002
+    networks:
+      - fepa-network
+
+  budget-service:
+    build:
+      context: ../budget-service
+      dockerfile: Dockerfile
+    container_name: fepa-budget-service
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3003
+      - HTTP_PORT=4003
+    networks:
+      - fepa-network
+
+  blog-service:
+    build:
+      context: ../blog-service
+      dockerfile: Dockerfile
+    container_name: fepa-blog-service
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3004
+      - HTTP_PORT=4004
+    networks:
+      - fepa-network
+
+  subscription-service:
+    build:
+      context: ../subscription-service
+      dockerfile: Dockerfile
+    container_name: fepa-subscription-service
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3005
+      - HTTP_PORT=4005
+    networks:
+      - fepa-network
+
+  notification-service:
+    build:
+      context: ../notification-service
+      dockerfile: Dockerfile
+    container_name: fepa-notification-service
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3006
+      - HTTP_PORT=4006
+    networks:
+      - fepa-network
+
+  ocr-service:
+    build:
+      context: ../ocr-service
+      dockerfile: Dockerfile
+    container_name: fepa-ocr-service
+    ports:
+      - "3007:3007"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3007
+      - HTTP_PORT=4007
+    networks:
+      - fepa-network
+
+  ai-service:
+    build:
+      context: ../ai-service
+      dockerfile: Dockerfile
+    container_name: fepa-ai-service
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=development
+      - TCP_PORT=3008
+      - HTTP_PORT=4008
+    networks:
+      - fepa-network
+
+networks:
+  fepa-network:
+    driver: bridge
