@@ -45,6 +45,11 @@ model RefreshToken {
 }
 ```
 
+**Chức năng**
+
+- `User`: lưu thông tin tài khoản đăng nhập (email, mật khẩu băm, tên, vai trò) và thời gian tạo/cập nhật.
+- `RefreshToken`: quản lý các refresh token của từng user để cấp lại access token; xoá theo user khi cần nhờ quan hệ `onDelete: Cascade`.
+
 ---
 
 ## 2) expense-service
@@ -69,6 +74,11 @@ model Category {
 }
 ```
 
+**Chức năng**
+
+- `Expense`: ghi nhận từng khoản chi của người dùng (mô tả, số tiền, loại, ngày chi); chỉ mục hỗ trợ truy vấn theo `userId` và `spentAt`.
+- `Category`: danh mục tĩnh/tuỳ chỉnh cho các khoản chi, khoá chính là `slug`.
+
 ---
 
 ## 3) budget-service
@@ -89,6 +99,10 @@ model Budget {
 }
 ```
 
+**Chức năng**
+
+- `Budget`: đặt hạn mức chi cho người dùng theo danh mục và thời gian (start/end); theo dõi số tiền giới hạn và metadata thời gian tạo/cập nhật.
+
 ---
 
 ## 4) blog-service
@@ -106,6 +120,10 @@ model Blog {
   updatedAt   DateTime @updatedAt @db.Timestamptz(6)
 }
 ```
+
+**Chức năng**
+
+- `Blog`: lưu bài viết blog (tiêu đề, slug, nội dung, trạng thái, tác giả, thời gian xuất bản) phục vụ CMS/marketing.
 
 ---
 
@@ -137,6 +155,11 @@ model Subscription {
 }
 ```
 
+**Chức năng**
+
+- `Plan`: định nghĩa các gói subscription (tên, giá, chu kỳ) và danh sách đăng ký liên quan.
+- `Subscription`: bản ghi đăng ký của người dùng cho từng gói; có trạng thái, ngày bắt đầu/kết thúc; chỉ mục cho truy vấn theo `userId` và `status`.
+
 ---
 
 ## 6) notification-service
@@ -154,6 +177,10 @@ model Notification {
   @@index([userId, isRead])
 }
 ```
+
+**Chức năng**
+
+- `Notification`: lưu thông báo gửi cho người dùng (tiêu đề, nội dung, loại, trạng thái đã đọc) với chỉ mục hỗ trợ lọc theo `userId` và `isRead`.
 
 ---
 
@@ -173,6 +200,10 @@ model OcrJob {
 }
 ```
 
+**Chức năng**
+
+- `OcrJob`: theo dõi job OCR cho tệp người dùng (trạng thái, file URL, kết quả JSON, thời gian hoàn thành) và tra cứu theo `userId`/`status`.
+
 ---
 
 ## 8) ai-service
@@ -189,6 +220,10 @@ model AiInsight {
   @@index([userId, inputType])
 }
 ```
+
+**Chức năng**
+
+- `AiInsight`: lưu lịch sử yêu cầu/đáp ứng AI của người dùng (loại input, payload yêu cầu/đáp ứng) để truy vết và phân tích; chỉ mục theo `userId` và `inputType`.
 
 ---
 
