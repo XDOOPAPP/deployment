@@ -92,6 +92,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3004
       - HTTP_PORT=4004
+      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_db?schema=blog
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -151,6 +155,28 @@ services:
     networks:
       - fepa-network
 
+  postgres:
+    image: postgres:15-alpine
+    container_name: fepa-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=fepa
+      - POSTGRES_PASSWORD=fepa123
+      - POSTGRES_DB=fepa_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fepa-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fepa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
   fepa-network:
     driver: bridge
+
+volumes:
+  postgres_data:
