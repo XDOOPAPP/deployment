@@ -22,16 +22,16 @@
 
 FEPA (Financial Expense & Planning Assistant) là hệ thống quản lý tài chính cá nhân với các nhóm chức năng chính:
 
-| Module | Mô tả | Actors |
-|--------|-------|--------|
-| **Authentication** | Xác thực, phân quyền người dùng | Guest, User, Admin |
-| **Expense Management** | Quản lý các khoản chi tiêu | User |
-| **Budget Management** | Lập và theo dõi ngân sách | User |
-| **Blog/CMS** | Quản lý bài viết, tin tức | Guest, Admin |
-| **Subscription** | Quản lý gói đăng ký dịch vụ | Guest, User |
-| **Notification** | Hệ thống thông báo | User, System |
-| **OCR** | Quét và nhận diện hóa đơn | User |
-| **AI Insights** | Phân tích dữ liệu tài chính | User |
+| Module                 | Mô tả                           | Actors             |
+| ---------------------- | ------------------------------- | ------------------ |
+| **Authentication**     | Xác thực, phân quyền người dùng | Guest, User, Admin |
+| **Expense Management** | Quản lý các khoản chi tiêu      | User               |
+| **Budget Management**  | Lập và theo dõi ngân sách       | User               |
+| **Blog/CMS**           | Quản lý bài viết, tin tức       | Guest, Admin       |
+| **Subscription**       | Quản lý gói đăng ký dịch vụ     | Guest, User        |
+| **Notification**       | Hệ thống thông báo              | User, System       |
+| **OCR**                | Quét và nhận diện hóa đơn       | User               |
+| **AI Insights**        | Phân tích dữ liệu tài chính     | User               |
 
 ### Actors (Tác nhân)
 
@@ -43,7 +43,7 @@ graph LR
         Admin[👨‍💻 Admin<br/>Quản trị viên]
         System[⚙️ System<br/>Hệ thống tự động]
     end
-    
+
     Guest -->|Đăng ký/Đăng nhập| User
     User -->|Được cấp quyền| Admin
 ```
@@ -194,7 +194,7 @@ graph TB
         Guest((Guest))
         User((User))
         Admin((Admin))
-        
+
         UC1[UC-AUTH-01<br/>Đăng ký tài khoản]
         UC2[UC-AUTH-02<br/>Xác thực OTP]
         UC3[UC-AUTH-03<br/>Đăng nhập]
@@ -202,36 +202,37 @@ graph TB
         UC5[UC-AUTH-05<br/>Xem Profile]
         UC6[UC-AUTH-06<br/>Quên mật khẩu]
         UC7[UC-AUTH-07<br/>Đặt lại mật khẩu]
-        
+
         Guest --> UC1
         Guest --> UC3
         Guest --> UC6
-        
+
         UC1 -.->|include| UC2
         UC6 -.->|include| UC7
-        
+
         User --> UC4
         User --> UC5
         User --> UC7
-        
+
         Admin --> UC5
     end
 ```
 
 #### UC-AUTH-01: Đăng ký tài khoản
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-01 |
-| **Tên** | Đăng ký tài khoản |
-| **Actor** | Guest |
-| **Mô tả** | Người dùng mới đăng ký tài khoản vào hệ thống |
-| **Precondition** | Email chưa tồn tại trong hệ thống |
-| **Postcondition** | OTP được gửi đến email, tài khoản ở trạng thái chưa xác thực |
-| **API Endpoint** | `POST /api/v1/auth/register` |
-| **Service Pattern** | `auth.register` |
+| Thuộc tính          | Mô tả                                                        |
+| ------------------- | ------------------------------------------------------------ |
+| **ID**              | UC-AUTH-01                                                   |
+| **Tên**             | Đăng ký tài khoản                                            |
+| **Actor**           | Guest                                                        |
+| **Mô tả**           | Người dùng mới đăng ký tài khoản vào hệ thống                |
+| **Precondition**    | Email chưa tồn tại trong hệ thống                            |
+| **Postcondition**   | OTP được gửi đến email, tài khoản ở trạng thái chưa xác thực |
+| **API Endpoint**    | `POST /api/v1/auth/register`                                 |
+| **Service Pattern** | `auth.register`                                              |
 
 **Flow chính:**
+
 ```mermaid
 sequenceDiagram
     actor Guest
@@ -256,18 +257,19 @@ sequenceDiagram
 
 #### UC-AUTH-02: Xác thực OTP
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-02 |
-| **Tên** | Xác thực OTP |
-| **Actor** | Guest (sau khi đăng ký) |
-| **Mô tả** | Xác thực email bằng mã OTP |
-| **Precondition** | Đã nhận được OTP qua email, OTP chưa hết hạn (5 phút) |
-| **Postcondition** | Tài khoản được kích hoạt, nhận được access & refresh token |
-| **API Endpoint** | `POST /api/v1/auth/verify-otp` |
-| **Service Pattern** | `auth.verifyOtp` |
+| Thuộc tính          | Mô tả                                                      |
+| ------------------- | ---------------------------------------------------------- |
+| **ID**              | UC-AUTH-02                                                 |
+| **Tên**             | Xác thực OTP                                               |
+| **Actor**           | Guest (sau khi đăng ký)                                    |
+| **Mô tả**           | Xác thực email bằng mã OTP                                 |
+| **Precondition**    | Đã nhận được OTP qua email, OTP chưa hết hạn (5 phút)      |
+| **Postcondition**   | Tài khoản được kích hoạt, nhận được access & refresh token |
+| **API Endpoint**    | `POST /api/v1/auth/verify-otp`                             |
+| **Service Pattern** | `auth.verifyOtp`                                           |
 
 **Flow chính:**
+
 ```mermaid
 sequenceDiagram
     actor Guest
@@ -291,18 +293,19 @@ sequenceDiagram
 
 #### UC-AUTH-03: Đăng nhập
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-03 |
-| **Tên** | Đăng nhập |
-| **Actor** | Guest |
-| **Mô tả** | Đăng nhập vào hệ thống với email và password |
-| **Precondition** | Tài khoản đã được xác thực (isVerified = true) |
-| **Postcondition** | Nhận được access & refresh token |
-| **API Endpoint** | `POST /api/v1/auth/login` |
-| **Service Pattern** | `auth.login` |
+| Thuộc tính          | Mô tả                                          |
+| ------------------- | ---------------------------------------------- |
+| **ID**              | UC-AUTH-03                                     |
+| **Tên**             | Đăng nhập                                      |
+| **Actor**           | Guest                                          |
+| **Mô tả**           | Đăng nhập vào hệ thống với email và password   |
+| **Precondition**    | Tài khoản đã được xác thực (isVerified = true) |
+| **Postcondition**   | Nhận được access & refresh token               |
+| **API Endpoint**    | `POST /api/v1/auth/login`                      |
+| **Service Pattern** | `auth.login`                                   |
 
 **Flow chính:**
+
 ```mermaid
 sequenceDiagram
     actor Guest
@@ -325,55 +328,55 @@ sequenceDiagram
 
 #### UC-AUTH-04: Làm mới Token
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-04 |
-| **Tên** | Làm mới Access Token |
-| **Actor** | User |
-| **Mô tả** | Sử dụng refresh token để lấy access token mới |
-| **Precondition** | Refresh token hợp lệ và chưa hết hạn |
-| **Postcondition** | Nhận được access token mới |
-| **API Endpoint** | `POST /api/v1/auth/refresh` |
-| **Service Pattern** | `auth.refresh` |
+| Thuộc tính          | Mô tả                                         |
+| ------------------- | --------------------------------------------- |
+| **ID**              | UC-AUTH-04                                    |
+| **Tên**             | Làm mới Access Token                          |
+| **Actor**           | User                                          |
+| **Mô tả**           | Sử dụng refresh token để lấy access token mới |
+| **Precondition**    | Refresh token hợp lệ và chưa hết hạn          |
+| **Postcondition**   | Nhận được access token mới                    |
+| **API Endpoint**    | `POST /api/v1/auth/refresh`                   |
+| **Service Pattern** | `auth.refresh`                                |
 
 #### UC-AUTH-05: Xem Profile
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-05 |
-| **Tên** | Xem thông tin cá nhân |
-| **Actor** | User, Admin |
-| **Mô tả** | Xem thông tin tài khoản của mình |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | Hiển thị thông tin user |
-| **API Endpoint** | `GET /api/v1/auth/me` |
-| **Service Pattern** | `auth.profile` |
+| Thuộc tính          | Mô tả                            |
+| ------------------- | -------------------------------- |
+| **ID**              | UC-AUTH-05                       |
+| **Tên**             | Xem thông tin cá nhân            |
+| **Actor**           | User, Admin                      |
+| **Mô tả**           | Xem thông tin tài khoản của mình |
+| **Precondition**    | Đã đăng nhập                     |
+| **Postcondition**   | Hiển thị thông tin user          |
+| **API Endpoint**    | `GET /api/v1/auth/me`            |
+| **Service Pattern** | `auth.profile`                   |
 
 #### UC-AUTH-06: Quên mật khẩu
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-06 |
-| **Tên** | Quên mật khẩu |
-| **Actor** | Guest |
-| **Mô tả** | Yêu cầu reset mật khẩu qua email |
-| **Precondition** | Email tồn tại trong hệ thống |
-| **Postcondition** | OTP được gửi đến email |
-| **API Endpoint** | `POST /api/v1/auth/forgot-password` |
-| **Service Pattern** | `auth.forgotPassword` |
+| Thuộc tính          | Mô tả                               |
+| ------------------- | ----------------------------------- |
+| **ID**              | UC-AUTH-06                          |
+| **Tên**             | Quên mật khẩu                       |
+| **Actor**           | Guest                               |
+| **Mô tả**           | Yêu cầu reset mật khẩu qua email    |
+| **Precondition**    | Email tồn tại trong hệ thống        |
+| **Postcondition**   | OTP được gửi đến email              |
+| **API Endpoint**    | `POST /api/v1/auth/forgot-password` |
+| **Service Pattern** | `auth.forgotPassword`               |
 
 #### UC-AUTH-07: Đặt lại mật khẩu
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AUTH-07 |
-| **Tên** | Đặt lại mật khẩu |
-| **Actor** | Guest/User |
-| **Mô tả** | Đặt lại mật khẩu mới với OTP |
-| **Precondition** | Có OTP hợp lệ từ forgot-password |
-| **Postcondition** | Mật khẩu được cập nhật |
-| **API Endpoint** | `POST /api/v1/auth/reset-password` |
-| **Service Pattern** | `auth.resetPassword` |
+| Thuộc tính          | Mô tả                              |
+| ------------------- | ---------------------------------- |
+| **ID**              | UC-AUTH-07                         |
+| **Tên**             | Đặt lại mật khẩu                   |
+| **Actor**           | Guest/User                         |
+| **Mô tả**           | Đặt lại mật khẩu mới với OTP       |
+| **Precondition**    | Có OTP hợp lệ từ forgot-password   |
+| **Postcondition**   | Mật khẩu được cập nhật             |
+| **API Endpoint**    | `POST /api/v1/auth/reset-password` |
+| **Service Pattern** | `auth.resetPassword`               |
 
 ---
 
@@ -384,7 +387,7 @@ graph TB
     subgraph "Expense Management Use Cases"
         User((User))
         Guest((Guest))
-        
+
         UC1[UC-EXP-01<br/>Tạo khoản chi]
         UC2[UC-EXP-02<br/>Xem danh sách chi tiêu]
         UC3[UC-EXP-03<br/>Xem chi tiết khoản chi]
@@ -392,7 +395,7 @@ graph TB
         UC5[UC-EXP-05<br/>Xóa khoản chi]
         UC6[UC-EXP-06<br/>Xem báo cáo tổng hợp]
         UC7[UC-EXP-07<br/>Xem danh mục chi tiêu]
-        
+
         User --> UC1
         User --> UC2
         User --> UC3
@@ -400,9 +403,9 @@ graph TB
         User --> UC5
         User --> UC6
         User --> UC7
-        
+
         Guest --> UC7
-        
+
         UC1 -.->|include| UC_VALIDATE[Validate Category]
         UC4 -.->|include| UC_VALIDATE
         UC3 -.->|extend| UC2
@@ -411,18 +414,19 @@ graph TB
 
 #### UC-EXP-01: Tạo khoản chi
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-01 |
-| **Tên** | Tạo khoản chi mới |
-| **Actor** | User |
-| **Mô tả** | Người dùng thêm một khoản chi tiêu mới |
-| **Precondition** | Đã đăng nhập, category (nếu có) phải tồn tại |
-| **Postcondition** | Khoản chi được lưu vào database |
-| **API Endpoint** | `POST /api/v1/expenses` |
-| **Service Pattern** | `expense.create` |
+| Thuộc tính          | Mô tả                                        |
+| ------------------- | -------------------------------------------- |
+| **ID**              | UC-EXP-01                                    |
+| **Tên**             | Tạo khoản chi mới                            |
+| **Actor**           | User                                         |
+| **Mô tả**           | Người dùng thêm một khoản chi tiêu mới       |
+| **Precondition**    | Đã đăng nhập, category (nếu có) phải tồn tại |
+| **Postcondition**   | Khoản chi được lưu vào database              |
+| **API Endpoint**    | `POST /api/v1/expenses`                      |
+| **Service Pattern** | `expense.create`                             |
 
 **Flow chính:**
+
 ```mermaid
 sequenceDiagram
     actor User
@@ -448,6 +452,7 @@ sequenceDiagram
 ```
 
 **Input:**
+
 ```typescript
 {
   description: string;      // Mô tả khoản chi
@@ -458,9 +463,10 @@ sequenceDiagram
 ```
 
 **Output:**
+
 ```typescript
 {
-  id: string;               // UUID
+  id: string; // UUID
   userId: string;
   description: string;
   amount: number;
@@ -473,18 +479,19 @@ sequenceDiagram
 
 #### UC-EXP-02: Xem danh sách chi tiêu
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-02 |
-| **Tên** | Xem danh sách chi tiêu |
-| **Actor** | User |
-| **Mô tả** | Xem tất cả khoản chi của mình với filter |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | Hiển thị danh sách khoản chi |
-| **API Endpoint** | `GET /api/v1/expenses` |
-| **Service Pattern** | `expense.findAll` |
+| Thuộc tính          | Mô tả                                    |
+| ------------------- | ---------------------------------------- |
+| **ID**              | UC-EXP-02                                |
+| **Tên**             | Xem danh sách chi tiêu                   |
+| **Actor**           | User                                     |
+| **Mô tả**           | Xem tất cả khoản chi của mình với filter |
+| **Precondition**    | Đã đăng nhập                             |
+| **Postcondition**   | Hiển thị danh sách khoản chi             |
+| **API Endpoint**    | `GET /api/v1/expenses`                   |
+| **Service Pattern** | `expense.findAll`                        |
 
 **Query Parameters:**
+
 ```typescript
 {
   from?: string;        // Lọc từ ngày (YYYY-MM-DD)
@@ -496,6 +503,7 @@ sequenceDiagram
 ```
 
 **Response:**
+
 ```typescript
 {
   data: Expense[];
@@ -511,57 +519,58 @@ sequenceDiagram
 
 #### UC-EXP-03: Xem chi tiết khoản chi
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-03 |
-| **Tên** | Xem chi tiết khoản chi |
-| **Actor** | User |
-| **Mô tả** | Xem thông tin chi tiết một khoản chi |
-| **Precondition** | Đã đăng nhập, expense thuộc về user |
-| **Postcondition** | Hiển thị chi tiết khoản chi |
-| **API Endpoint** | `GET /api/v1/expenses/:id` |
-| **Service Pattern** | `expense.findOne` |
+| Thuộc tính          | Mô tả                                |
+| ------------------- | ------------------------------------ |
+| **ID**              | UC-EXP-03                            |
+| **Tên**             | Xem chi tiết khoản chi               |
+| **Actor**           | User                                 |
+| **Mô tả**           | Xem thông tin chi tiết một khoản chi |
+| **Precondition**    | Đã đăng nhập, expense thuộc về user  |
+| **Postcondition**   | Hiển thị chi tiết khoản chi          |
+| **API Endpoint**    | `GET /api/v1/expenses/:id`           |
+| **Service Pattern** | `expense.findOne`                    |
 
 #### UC-EXP-04: Cập nhật khoản chi
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-04 |
-| **Tên** | Cập nhật khoản chi |
-| **Actor** | User |
-| **Mô tả** | Sửa thông tin một khoản chi |
-| **Precondition** | Đã đăng nhập, expense thuộc về user |
-| **Postcondition** | Khoản chi được cập nhật |
-| **API Endpoint** | `PATCH /api/v1/expenses/:id` |
-| **Service Pattern** | `expense.update` |
+| Thuộc tính          | Mô tả                               |
+| ------------------- | ----------------------------------- |
+| **ID**              | UC-EXP-04                           |
+| **Tên**             | Cập nhật khoản chi                  |
+| **Actor**           | User                                |
+| **Mô tả**           | Sửa thông tin một khoản chi         |
+| **Precondition**    | Đã đăng nhập, expense thuộc về user |
+| **Postcondition**   | Khoản chi được cập nhật             |
+| **API Endpoint**    | `PATCH /api/v1/expenses/:id`        |
+| **Service Pattern** | `expense.update`                    |
 
 #### UC-EXP-05: Xóa khoản chi
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-05 |
-| **Tên** | Xóa khoản chi |
-| **Actor** | User |
-| **Mô tả** | Xóa một khoản chi |
-| **Precondition** | Đã đăng nhập, expense thuộc về user |
-| **Postcondition** | Khoản chi bị xóa khỏi database |
-| **API Endpoint** | `DELETE /api/v1/expenses/:id` |
-| **Service Pattern** | `expense.remove` |
+| Thuộc tính          | Mô tả                               |
+| ------------------- | ----------------------------------- |
+| **ID**              | UC-EXP-05                           |
+| **Tên**             | Xóa khoản chi                       |
+| **Actor**           | User                                |
+| **Mô tả**           | Xóa một khoản chi                   |
+| **Precondition**    | Đã đăng nhập, expense thuộc về user |
+| **Postcondition**   | Khoản chi bị xóa khỏi database      |
+| **API Endpoint**    | `DELETE /api/v1/expenses/:id`       |
+| **Service Pattern** | `expense.remove`                    |
 
 #### UC-EXP-06: Xem báo cáo tổng hợp
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-06 |
-| **Tên** | Xem báo cáo tổng hợp chi tiêu |
-| **Actor** | User |
-| **Mô tả** | Xem thống kê tổng hợp theo thời gian và category |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | Hiển thị báo cáo tổng hợp |
-| **API Endpoint** | `GET /api/v1/expenses/summary` |
-| **Service Pattern** | `expense.summary` |
+| Thuộc tính          | Mô tả                                            |
+| ------------------- | ------------------------------------------------ |
+| **ID**              | UC-EXP-06                                        |
+| **Tên**             | Xem báo cáo tổng hợp chi tiêu                    |
+| **Actor**           | User                                             |
+| **Mô tả**           | Xem thống kê tổng hợp theo thời gian và category |
+| **Precondition**    | Đã đăng nhập                                     |
+| **Postcondition**   | Hiển thị báo cáo tổng hợp                        |
+| **API Endpoint**    | `GET /api/v1/expenses/summary`                   |
+| **Service Pattern** | `expense.summary`                                |
 
 **Query Parameters:**
+
 ```typescript
 {
   from?: string;            // Từ ngày
@@ -571,6 +580,7 @@ sequenceDiagram
 ```
 
 **Response:**
+
 ```typescript
 {
   total: number;                    // Tổng chi tiêu
@@ -590,16 +600,16 @@ sequenceDiagram
 
 #### UC-EXP-07: Xem danh mục chi tiêu
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-EXP-07 |
-| **Tên** | Xem danh mục chi tiêu |
-| **Actor** | Guest, User |
-| **Mô tả** | Xem danh sách các danh mục chi tiêu có sẵn |
-| **Precondition** | Không |
-| **Postcondition** | Hiển thị danh sách categories |
-| **API Endpoint** | `GET /api/v1/expenses/categories` |
-| **Service Pattern** | `expense.categories` |
+| Thuộc tính          | Mô tả                                      |
+| ------------------- | ------------------------------------------ |
+| **ID**              | UC-EXP-07                                  |
+| **Tên**             | Xem danh mục chi tiêu                      |
+| **Actor**           | Guest, User                                |
+| **Mô tả**           | Xem danh sách các danh mục chi tiêu có sẵn |
+| **Precondition**    | Không                                      |
+| **Postcondition**   | Hiển thị danh sách categories              |
+| **API Endpoint**    | `GET /api/v1/expenses/categories`          |
+| **Service Pattern** | `expense.categories`                       |
 
 ---
 
@@ -609,39 +619,40 @@ sequenceDiagram
 graph TB
     subgraph "Budget Management Use Cases"
         User((User))
-        
+
         UC1[UC-BUD-01<br/>Tạo ngân sách]
         UC2[UC-BUD-02<br/>Xem danh sách ngân sách]
         UC3[UC-BUD-03<br/>Xem chi tiết ngân sách]
         UC4[UC-BUD-04<br/>Cập nhật ngân sách]
         UC5[UC-BUD-05<br/>Xóa ngân sách]
         UC6[UC-BUD-06<br/>Theo dõi tiến độ]
-        
+
         User --> UC1
         User --> UC2
         User --> UC3
         User --> UC4
         User --> UC5
         User --> UC6
-        
+
         UC6 -.->|include| UC_GET_EXP[Lấy tổng chi tiêu<br/>từ Expense Service]
     end
 ```
 
 #### UC-BUD-01: Tạo ngân sách
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-BUD-01 |
-| **Tên** | Tạo ngân sách mới |
-| **Actor** | User |
-| **Mô tả** | Người dùng tạo ngân sách cho một category/thời gian |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | Ngân sách được tạo |
-| **API Endpoint** | `POST /api/v1/budgets` |
-| **Service Pattern** | `budget.create` |
+| Thuộc tính          | Mô tả                                               |
+| ------------------- | --------------------------------------------------- |
+| **ID**              | UC-BUD-01                                           |
+| **Tên**             | Tạo ngân sách mới                                   |
+| **Actor**           | User                                                |
+| **Mô tả**           | Người dùng tạo ngân sách cho một category/thời gian |
+| **Precondition**    | Đã đăng nhập                                        |
+| **Postcondition**   | Ngân sách được tạo                                  |
+| **API Endpoint**    | `POST /api/v1/budgets`                              |
+| **Service Pattern** | `budget.create`                                     |
 
 **Input:**
+
 ```typescript
 {
   name: string;             // Tên ngân sách
@@ -654,18 +665,19 @@ graph TB
 
 #### UC-BUD-06: Theo dõi tiến độ
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-BUD-06 |
-| **Tên** | Theo dõi tiến độ ngân sách |
-| **Actor** | User |
-| **Mô tả** | Xem tổng chi tiêu so với hạn mức ngân sách |
-| **Precondition** | Đã đăng nhập, ngân sách tồn tại |
-| **Postcondition** | Hiển thị progress |
-| **API Endpoint** | `GET /api/v1/budgets/:id/progress` |
-| **Service Pattern** | `budget.progress` |
+| Thuộc tính          | Mô tả                                      |
+| ------------------- | ------------------------------------------ |
+| **ID**              | UC-BUD-06                                  |
+| **Tên**             | Theo dõi tiến độ ngân sách                 |
+| **Actor**           | User                                       |
+| **Mô tả**           | Xem tổng chi tiêu so với hạn mức ngân sách |
+| **Precondition**    | Đã đăng nhập, ngân sách tồn tại            |
+| **Postcondition**   | Hiển thị progress                          |
+| **API Endpoint**    | `GET /api/v1/budgets/:id/progress`         |
+| **Service Pattern** | `budget.progress`                          |
 
 **Flow (Cross-service communication):**
+
 ```mermaid
 sequenceDiagram
     actor User
@@ -689,6 +701,7 @@ sequenceDiagram
 ```
 
 **Response:**
+
 ```typescript
 {
   id: string;
@@ -700,8 +713,8 @@ sequenceDiagram
   progress: {
     totalSpent: number;
     remaining: number;
-    percentage: number;         // 0-100+
-    status: 'SAFE' | 'EXCEEDED';
+    percentage: number; // 0-100+
+    status: "SAFE" | "EXCEEDED";
   }
 }
 ```
@@ -715,40 +728,41 @@ graph TB
     subgraph "Blog/CMS Use Cases"
         Guest((Guest))
         Admin((Admin))
-        
+
         UC1[UC-BLOG-01<br/>Xem danh sách bài viết]
         UC2[UC-BLOG-02<br/>Xem chi tiết bài viết]
         UC3[UC-BLOG-03<br/>Tạo bài viết]
         UC4[UC-BLOG-04<br/>Cập nhật bài viết]
         UC5[UC-BLOG-05<br/>Xóa bài viết]
-        
+
         Guest --> UC1
         Guest --> UC2
-        
+
         Admin --> UC1
         Admin --> UC2
         Admin --> UC3
         Admin --> UC4
         Admin --> UC5
-        
+
         UC3 -.->|include| UC_GEN_SLUG[Tự động tạo slug]
     end
 ```
 
 #### UC-BLOG-01: Xem danh sách bài viết
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-BLOG-01 |
-| **Tên** | Xem danh sách bài viết |
-| **Actor** | Guest, Admin |
-| **Mô tả** | Xem danh sách các bài viết blog |
-| **Precondition** | Không |
-| **Postcondition** | Hiển thị danh sách bài viết |
-| **API Endpoint** | `GET /api/v1/blogs` |
-| **Service Pattern** | `blog.find_all` |
+| Thuộc tính          | Mô tả                           |
+| ------------------- | ------------------------------- |
+| **ID**              | UC-BLOG-01                      |
+| **Tên**             | Xem danh sách bài viết          |
+| **Actor**           | Guest, Admin                    |
+| **Mô tả**           | Xem danh sách các bài viết blog |
+| **Precondition**    | Không                           |
+| **Postcondition**   | Hiển thị danh sách bài viết     |
+| **API Endpoint**    | `GET /api/v1/blogs`             |
+| **Service Pattern** | `blog.find_all`                 |
 
 **Query Parameters:**
+
 ```typescript
 {
   status?: string;      // Lọc theo status (published, draft)
@@ -759,31 +773,32 @@ graph TB
 
 #### UC-BLOG-02: Xem chi tiết bài viết
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-BLOG-02 |
-| **Tên** | Xem chi tiết bài viết |
-| **Actor** | Guest, Admin |
-| **Mô tả** | Xem nội dung đầy đủ một bài viết |
-| **Precondition** | Bài viết tồn tại |
-| **Postcondition** | Hiển thị nội dung bài viết |
-| **API Endpoint** | `GET /api/v1/blogs/:slug` |
-| **Service Pattern** | `blog.find_by_slug` |
+| Thuộc tính          | Mô tả                            |
+| ------------------- | -------------------------------- |
+| **ID**              | UC-BLOG-02                       |
+| **Tên**             | Xem chi tiết bài viết            |
+| **Actor**           | Guest, Admin                     |
+| **Mô tả**           | Xem nội dung đầy đủ một bài viết |
+| **Precondition**    | Bài viết tồn tại                 |
+| **Postcondition**   | Hiển thị nội dung bài viết       |
+| **API Endpoint**    | `GET /api/v1/blogs/:slug`        |
+| **Service Pattern** | `blog.find_by_slug`              |
 
 #### UC-BLOG-03: Tạo bài viết (Admin)
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-BLOG-03 |
-| **Tên** | Tạo bài viết mới |
-| **Actor** | Admin |
-| **Mô tả** | Admin tạo bài viết blog mới |
-| **Precondition** | Đã đăng nhập với role ADMIN |
-| **Postcondition** | Bài viết được tạo |
-| **API Endpoint** | `POST /api/v1/blogs` |
-| **Service Pattern** | `blog.create` |
+| Thuộc tính          | Mô tả                       |
+| ------------------- | --------------------------- |
+| **ID**              | UC-BLOG-03                  |
+| **Tên**             | Tạo bài viết mới            |
+| **Actor**           | Admin                       |
+| **Mô tả**           | Admin tạo bài viết blog mới |
+| **Precondition**    | Đã đăng nhập với role ADMIN |
+| **Postcondition**   | Bài viết được tạo           |
+| **API Endpoint**    | `POST /api/v1/blogs`        |
+| **Service Pattern** | `blog.create`               |
 
 **Input:**
+
 ```typescript
 {
   title: string;
@@ -804,15 +819,15 @@ graph TB
     subgraph "Subscription Use Cases"
         Guest((Guest))
         User((User))
-        
+
         UC1[UC-SUB-01<br/>Xem các gói dịch vụ]
         UC2[UC-SUB-02<br/>Xem gói hiện tại]
         UC3[UC-SUB-03<br/>Đăng ký gói]
         UC4[UC-SUB-04<br/>Hủy đăng ký]
         UC5[UC-SUB-05<br/>Xem lịch sử thanh toán]
-        
+
         Guest --> UC1
-        
+
         User --> UC1
         User --> UC2
         User --> UC3
@@ -823,18 +838,19 @@ graph TB
 
 #### UC-SUB-01: Xem các gói dịch vụ
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-SUB-01 |
-| **Tên** | Xem danh sách gói dịch vụ |
-| **Actor** | Guest, User |
-| **Mô tả** | Xem các gói subscription có sẵn |
-| **Precondition** | Không |
-| **Postcondition** | Hiển thị danh sách Plans |
-| **API Endpoint** | `GET /api/v1/subscriptions/plans` |
-| **Service Pattern** | `sub.plans` |
+| Thuộc tính          | Mô tả                             |
+| ------------------- | --------------------------------- |
+| **ID**              | UC-SUB-01                         |
+| **Tên**             | Xem danh sách gói dịch vụ         |
+| **Actor**           | Guest, User                       |
+| **Mô tả**           | Xem các gói subscription có sẵn   |
+| **Precondition**    | Không                             |
+| **Postcondition**   | Hiển thị danh sách Plans          |
+| **API Endpoint**    | `GET /api/v1/subscriptions/plans` |
+| **Service Pattern** | `sub.plans`                       |
 
 **Response:**
+
 ```typescript
 [{
   id: string;
@@ -847,16 +863,16 @@ graph TB
 
 #### UC-SUB-03: Đăng ký gói
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-SUB-03 |
-| **Tên** | Đăng ký gói mới |
-| **Actor** | User |
-| **Mô tả** | User đăng ký một gói dịch vụ |
-| **Precondition** | Đã đăng nhập, Plan tồn tại |
-| **Postcondition** | Subscription được tạo |
-| **API Endpoint** | `POST /api/v1/subscriptions` |
-| **Service Pattern** | `sub.subscribe` |
+| Thuộc tính          | Mô tả                        |
+| ------------------- | ---------------------------- |
+| **ID**              | UC-SUB-03                    |
+| **Tên**             | Đăng ký gói mới              |
+| **Actor**           | User                         |
+| **Mô tả**           | User đăng ký một gói dịch vụ |
+| **Precondition**    | Đã đăng nhập, Plan tồn tại   |
+| **Postcondition**   | Subscription được tạo        |
+| **API Endpoint**    | `POST /api/v1/subscriptions` |
+| **Service Pattern** | `sub.subscribe`              |
 
 ---
 
@@ -867,18 +883,18 @@ graph TB
     subgraph "Notification Use Cases"
         User((User))
         System((System))
-        
+
         UC1[UC-NOTIF-01<br/>Xem thông báo]
         UC2[UC-NOTIF-02<br/>Đánh dấu đã đọc]
         UC3[UC-NOTIF-03<br/>Đánh dấu tất cả đã đọc]
         UC4[UC-NOTIF-04<br/>Tạo thông báo<br/>(Internal)]
-        
+
         User --> UC1
         User --> UC2
         User --> UC3
-        
+
         System --> UC4
-        
+
         UC4 -.->|trigger| BUDGET_ALERT[Budget Alert<br/>Khi vượt 80%]
         UC4 -.->|trigger| OCR_COMPLETE[OCR Complete<br/>Khi xử lý xong]
     end
@@ -886,18 +902,19 @@ graph TB
 
 #### UC-NOTIF-01: Xem thông báo
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-NOTIF-01 |
-| **Tên** | Xem danh sách thông báo |
-| **Actor** | User |
-| **Mô tả** | Xem tất cả thông báo của mình |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | Hiển thị danh sách thông báo |
-| **API Endpoint** | `GET /api/v1/notifications` |
-| **Service Pattern** | `notif.find_all` |
+| Thuộc tính          | Mô tả                         |
+| ------------------- | ----------------------------- |
+| **ID**              | UC-NOTIF-01                   |
+| **Tên**             | Xem danh sách thông báo       |
+| **Actor**           | User                          |
+| **Mô tả**           | Xem tất cả thông báo của mình |
+| **Precondition**    | Đã đăng nhập                  |
+| **Postcondition**   | Hiển thị danh sách thông báo  |
+| **API Endpoint**    | `GET /api/v1/notifications`   |
+| **Service Pattern** | `notif.find_all`              |
 
 **Query Parameters:**
+
 ```typescript
 {
   unreadOnly?: boolean;     // Chỉ lấy chưa đọc
@@ -906,16 +923,17 @@ graph TB
 
 #### UC-NOTIF-04: Tạo thông báo (Internal)
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-NOTIF-04 |
-| **Tên** | Tạo thông báo (Internal) |
-| **Actor** | System |
-| **Mô tả** | Hệ thống tự động tạo thông báo cho user |
-| **Trigger** | Budget vượt hạn mức, OCR hoàn tất, etc. |
-| **Service Pattern** | `notif.create` |
+| Thuộc tính          | Mô tả                                   |
+| ------------------- | --------------------------------------- |
+| **ID**              | UC-NOTIF-04                             |
+| **Tên**             | Tạo thông báo (Internal)                |
+| **Actor**           | System                                  |
+| **Mô tả**           | Hệ thống tự động tạo thông báo cho user |
+| **Trigger**         | Budget vượt hạn mức, OCR hoàn tất, etc. |
+| **Service Pattern** | `notif.create`                          |
 
 **System Notification Flow:**
+
 ```mermaid
 sequenceDiagram
     participant Budget as Budget Service
@@ -938,16 +956,16 @@ graph TB
     subgraph "OCR Use Cases"
         User((User))
         System((System))
-        
+
         UC1[UC-OCR-01<br/>Quét hóa đơn]
         UC2[UC-OCR-02<br/>Xem lịch sử quét]
         UC3[UC-OCR-03<br/>Xem chi tiết job]
         UC4[UC-OCR-04<br/>Xử lý OCR<br/>(Background)]
-        
+
         User --> UC1
         User --> UC2
         User --> UC3
-        
+
         UC1 -.->|trigger| UC4
         System --> UC4
     end
@@ -955,18 +973,19 @@ graph TB
 
 #### UC-OCR-01: Quét hóa đơn
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-OCR-01 |
-| **Tên** | Quét hóa đơn |
-| **Actor** | User |
-| **Mô tả** | Upload ảnh hóa đơn để trích xuất thông tin |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | OCR job được tạo, trạng thái 'queued' |
-| **API Endpoint** | `POST /api/v1/ocr/scan` |
-| **Service Pattern** | `ocr.scan` |
+| Thuộc tính          | Mô tả                                      |
+| ------------------- | ------------------------------------------ |
+| **ID**              | UC-OCR-01                                  |
+| **Tên**             | Quét hóa đơn                               |
+| **Actor**           | User                                       |
+| **Mô tả**           | Upload ảnh hóa đơn để trích xuất thông tin |
+| **Precondition**    | Đã đăng nhập                               |
+| **Postcondition**   | OCR job được tạo, trạng thái 'queued'      |
+| **API Endpoint**    | `POST /api/v1/ocr/scan`                    |
+| **Service Pattern** | `ocr.scan`                                 |
 
 **Flow:**
+
 ```mermaid
 sequenceDiagram
     actor User
@@ -993,14 +1012,16 @@ sequenceDiagram
 ```
 
 **Response (Immediate):**
+
 ```typescript
 {
   jobId: string;
-  status: 'queued';
+  status: "queued";
 }
 ```
 
 **Result (After processing):**
+
 ```typescript
 {
   id: string;
@@ -1024,15 +1045,15 @@ sequenceDiagram
 graph TB
     subgraph "AI Insights Use Cases"
         User((User))
-        
+
         UC1[UC-AI-01<br/>Lấy phân tích tài chính]
         UC2[UC-AI-02<br/>Xem dự đoán chi tiêu]
         UC3[UC-AI-03<br/>Phân loại tự động]
-        
+
         User --> UC1
         User --> UC2
         User --> UC3
-        
+
         UC1 -.->|include| GET_DATA[Lấy dữ liệu từ<br/>Expense & Budget]
         UC2 -.->|include| GET_DATA
         UC3 -.->|include| ML_MODEL[Sử dụng ML Model]
@@ -1041,18 +1062,19 @@ graph TB
 
 #### UC-AI-01: Lấy phân tích tài chính
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AI-01 |
-| **Tên** | Lấy phân tích tài chính |
-| **Actor** | User |
-| **Mô tả** | AI phân tích xu hướng chi tiêu và đưa ra gợi ý |
-| **Precondition** | Đã đăng nhập, có dữ liệu chi tiêu |
-| **Postcondition** | Hiển thị insights và recommendations |
-| **API Endpoint** | `GET /api/v1/ai/insights` |
-| **Service Pattern** | `ai.insights` |
+| Thuộc tính          | Mô tả                                          |
+| ------------------- | ---------------------------------------------- |
+| **ID**              | UC-AI-01                                       |
+| **Tên**             | Lấy phân tích tài chính                        |
+| **Actor**           | User                                           |
+| **Mô tả**           | AI phân tích xu hướng chi tiêu và đưa ra gợi ý |
+| **Precondition**    | Đã đăng nhập, có dữ liệu chi tiêu              |
+| **Postcondition**   | Hiển thị insights và recommendations           |
+| **API Endpoint**    | `GET /api/v1/ai/insights`                      |
+| **Service Pattern** | `ai.insights`                                  |
 
 **Flow:**
+
 ```mermaid
 sequenceDiagram
     actor User
@@ -1064,7 +1086,7 @@ sequenceDiagram
 
     User->>Gateway: GET /ai/insights?period=month
     Gateway->>AI: TCP: ai.insights
-    
+
     par Gather data
         AI->>Expense: TCP: expense.findAll
         Expense-->>AI: expenses[]
@@ -1072,7 +1094,7 @@ sequenceDiagram
         AI->>Budget: TCP: budget.findAll
         Budget-->>AI: budgets[]
     end
-    
+
     AI->>AI: Analyze patterns:<br/>- Spending trends<br/>- Category breakdown<br/>- Budget compliance<br/>- Anomaly detection
     AI->>AIDB: Store AiInsight
     AI-->>Gateway: {insights}
@@ -1080,6 +1102,7 @@ sequenceDiagram
 ```
 
 **Query Parameters:**
+
 ```typescript
 {
   period?: 'week' | 'month' | 'quarter' | 'year';
@@ -1088,6 +1111,7 @@ sequenceDiagram
 ```
 
 **Response:**
+
 ```typescript
 {
   trends: {
@@ -1112,18 +1136,19 @@ sequenceDiagram
 
 #### UC-AI-03: Phân loại tự động
 
-| Thuộc tính | Mô tả |
-|------------|-------|
-| **ID** | UC-AI-03 |
-| **Tên** | Phân loại khoản chi tự động |
-| **Actor** | User |
-| **Mô tả** | AI tự động đề xuất category cho khoản chi |
-| **Precondition** | Đã đăng nhập |
-| **Postcondition** | Trả về category đề xuất |
-| **API Endpoint** | `POST /api/v1/ai/categorize` |
-| **Service Pattern** | `ai.categorize` |
+| Thuộc tính          | Mô tả                                     |
+| ------------------- | ----------------------------------------- |
+| **ID**              | UC-AI-03                                  |
+| **Tên**             | Phân loại khoản chi tự động               |
+| **Actor**           | User                                      |
+| **Mô tả**           | AI tự động đề xuất category cho khoản chi |
+| **Precondition**    | Đã đăng nhập                              |
+| **Postcondition**   | Trả về category đề xuất                   |
+| **API Endpoint**    | `POST /api/v1/ai/categorize`              |
+| **Service Pattern** | `ai.categorize`                           |
 
 **Input:**
+
 ```typescript
 {
   description: string;      // Mô tả khoản chi
@@ -1132,10 +1157,11 @@ sequenceDiagram
 ```
 
 **Response:**
+
 ```typescript
 {
   suggestedCategory: string;
-  confidence: number;           // 0-1
+  confidence: number; // 0-1
   alternatives: Array<{
     category: string;
     confidence: number;
@@ -1147,56 +1173,56 @@ sequenceDiagram
 
 ## 4. Ma Trận Actor - Use Case
 
-| Use Case | Guest | User | Admin | System |
-|----------|:-----:|:----:|:-----:|:------:|
-| **Authentication** |
-| Đăng ký tài khoản | ✓ | | | |
-| Xác thực OTP | ✓ | | | |
-| Đăng nhập | ✓ | | | |
-| Làm mới Token | | ✓ | ✓ | |
-| Xem Profile | | ✓ | ✓ | |
-| Quên mật khẩu | ✓ | | | |
-| Đặt lại mật khẩu | ✓ | ✓ | | |
-| **Expense Management** |
-| Tạo khoản chi | | ✓ | | |
-| Xem danh sách chi tiêu | | ✓ | | |
-| Xem chi tiết khoản chi | | ✓ | | |
-| Cập nhật khoản chi | | ✓ | | |
-| Xóa khoản chi | | ✓ | | |
-| Xem báo cáo tổng hợp | | ✓ | | |
-| Xem danh mục | ✓ | ✓ | | |
-| **Budget Management** |
-| Tạo ngân sách | | ✓ | | |
-| Xem danh sách ngân sách | | ✓ | | |
-| Xem chi tiết ngân sách | | ✓ | | |
-| Cập nhật ngân sách | | ✓ | | |
-| Xóa ngân sách | | ✓ | | |
-| Theo dõi tiến độ | | ✓ | | |
-| **Blog/CMS** |
-| Xem danh sách bài viết | ✓ | ✓ | ✓ | |
-| Xem chi tiết bài viết | ✓ | ✓ | ✓ | |
-| Tạo bài viết | | | ✓ | |
-| Cập nhật bài viết | | | ✓ | |
-| Xóa bài viết | | | ✓ | |
-| **Subscription** |
-| Xem các gói dịch vụ | ✓ | ✓ | | |
-| Xem gói hiện tại | | ✓ | | |
-| Đăng ký gói | | ✓ | | |
-| Hủy đăng ký | | ✓ | | |
-| Xem lịch sử thanh toán | | ✓ | | |
-| **Notification** |
-| Xem thông báo | | ✓ | | |
-| Đánh dấu đã đọc | | ✓ | | |
-| Đánh dấu tất cả đã đọc | | ✓ | | |
-| Tạo thông báo (Internal) | | | | ✓ |
-| **OCR** |
-| Quét hóa đơn | | ✓ | | |
-| Xem lịch sử quét | | ✓ | | |
-| Xem chi tiết job | | ✓ | | |
-| **AI Insights** |
-| Lấy phân tích tài chính | | ✓ | | |
-| Xem dự đoán chi tiêu | | ✓ | | |
-| Phân loại tự động | | ✓ | | |
+| Use Case                 | Guest | User | Admin | System |
+| ------------------------ | :---: | :--: | :---: | :----: |
+| **Authentication**       |
+| Đăng ký tài khoản        |   ✓   |      |       |        |
+| Xác thực OTP             |   ✓   |      |       |        |
+| Đăng nhập                |   ✓   |      |       |        |
+| Làm mới Token            |       |  ✓   |   ✓   |        |
+| Xem Profile              |       |  ✓   |   ✓   |        |
+| Quên mật khẩu            |   ✓   |      |       |        |
+| Đặt lại mật khẩu         |   ✓   |  ✓   |       |        |
+| **Expense Management**   |
+| Tạo khoản chi            |       |  ✓   |       |        |
+| Xem danh sách chi tiêu   |       |  ✓   |       |        |
+| Xem chi tiết khoản chi   |       |  ✓   |       |        |
+| Cập nhật khoản chi       |       |  ✓   |       |        |
+| Xóa khoản chi            |       |  ✓   |       |        |
+| Xem báo cáo tổng hợp     |       |  ✓   |       |        |
+| Xem danh mục             |   ✓   |  ✓   |       |        |
+| **Budget Management**    |
+| Tạo ngân sách            |       |  ✓   |       |        |
+| Xem danh sách ngân sách  |       |  ✓   |       |        |
+| Xem chi tiết ngân sách   |       |  ✓   |       |        |
+| Cập nhật ngân sách       |       |  ✓   |       |        |
+| Xóa ngân sách            |       |  ✓   |       |        |
+| Theo dõi tiến độ         |       |  ✓   |       |        |
+| **Blog/CMS**             |
+| Xem danh sách bài viết   |   ✓   |  ✓   |   ✓   |        |
+| Xem chi tiết bài viết    |   ✓   |  ✓   |   ✓   |        |
+| Tạo bài viết             |       |      |   ✓   |        |
+| Cập nhật bài viết        |       |      |   ✓   |        |
+| Xóa bài viết             |       |      |   ✓   |        |
+| **Subscription**         |
+| Xem các gói dịch vụ      |   ✓   |  ✓   |       |        |
+| Xem gói hiện tại         |       |  ✓   |       |        |
+| Đăng ký gói              |       |  ✓   |       |        |
+| Hủy đăng ký              |       |  ✓   |       |        |
+| Xem lịch sử thanh toán   |       |  ✓   |       |        |
+| **Notification**         |
+| Xem thông báo            |       |  ✓   |       |        |
+| Đánh dấu đã đọc          |       |  ✓   |       |        |
+| Đánh dấu tất cả đã đọc   |       |  ✓   |       |        |
+| Tạo thông báo (Internal) |       |      |       |   ✓    |
+| **OCR**                  |
+| Quét hóa đơn             |       |  ✓   |       |        |
+| Xem lịch sử quét         |       |  ✓   |       |        |
+| Xem chi tiết job         |       |  ✓   |       |        |
+| **AI Insights**          |
+| Lấy phân tích tài chính  |       |  ✓   |       |        |
+| Xem dự đoán chi tiêu     |       |  ✓   |       |        |
+| Phân loại tự động        |       |  ✓   |       |        |
 
 ---
 
@@ -1204,22 +1230,22 @@ sequenceDiagram
 
 ### Tóm tắt số lượng Use Cases theo Module
 
-| Module | Số lượng Use Cases |
-|--------|:------------------:|
-| Authentication | 7 |
-| Expense Management | 7 |
-| Budget Management | 6 |
-| Blog/CMS | 5 |
-| Subscription | 5 |
-| Notification | 4 |
-| OCR | 3 |
-| AI Insights | 3 |
-| **Tổng cộng** | **40** |
+| Module             | Số lượng Use Cases |
+| ------------------ | :----------------: |
+| Authentication     |         7          |
+| Expense Management |         7          |
+| Budget Management  |         6          |
+| Blog/CMS           |         5          |
+| Subscription       |         5          |
+| Notification       |         4          |
+| OCR                |         3          |
+| AI Insights        |         3          |
+| **Tổng cộng**      |       **40**       |
 
 ### Use Case ID Convention
 
 - `UC-AUTH-XX`: Authentication module
-- `UC-EXP-XX`: Expense Management module  
+- `UC-EXP-XX`: Expense Management module
 - `UC-BUD-XX`: Budget Management module
 - `UC-BLOG-XX`: Blog/CMS module
 - `UC-SUB-XX`: Subscription module
@@ -1243,7 +1269,7 @@ graph LR
         Notif[Notification Service]
         OCR[OCR Service]
         AI[AI Service]
-        
+
         Gateway --> Auth
         Gateway --> Expense
         Gateway --> Budget
@@ -1252,11 +1278,11 @@ graph LR
         Gateway --> Notif
         Gateway --> OCR
         Gateway --> AI
-        
+
         Budget --> Expense
         AI --> Expense
         AI --> Budget
-        
+
         Budget -.->|trigger| Notif
         OCR -.->|trigger| Notif
     end
