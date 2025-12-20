@@ -174,9 +174,26 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: fepa-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@fepa.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - fepa-network
+    restart: unless-stopped
+
 networks:
   fepa-network:
     driver: bridge
 
 volumes:
   postgres_data:
+  pgadmin_data:
