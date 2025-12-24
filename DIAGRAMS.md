@@ -4,6 +4,297 @@ Tài liệu tập trung vào các sơ đồ kiến trúc, quan hệ và luồng 
 
 ## 1. System Architecture (Microservices)
 
+### 0. Context Diagram (C4 Level 1)
+
+```mermaid
+graph TB
+  %% Actors
+  User["End User\n(Web/Mobile)"]
+  Admin["Admin/Operator"]
+
+  %% External Systems
+  Email["Email Service\n(OTP/Reset)"]
+  Storage["Object Storage\n(OCR uploads)"]
+  Queue["Job Queue\n(OCR async)"]
+
+  %% System Boundary
+  subgraph FEPA["FEPA System"]
+    Gateway["API Gateway :3000\nHTTP ⇄ TCP Bridge"]
+    Auth["Auth Service :3001"]
+    Expense["Expense Service :3002"]
+    Budget["Budget Service :3003"]
+    Blog["Blog Service :3004"]
+    Sub["Subscription Service :3005"]
+    Notif["Notification Service :3006"]
+    OCR["OCR Service :3007"]
+    AI["AI Service :3008"]
+  end
+
+  %% Data Stores (per-service DBs)
+  DBAuth[(Auth DB)]
+  DBExp[(Expense DB)]
+  DBBud[(Budget DB)]
+  DBBlog[(Blog DB)]
+  DBSub[(Subscription DB)]
+  DBNotif[(Notification DB)]
+  DBOCR[(OCR DB)]
+  DBAI[(AI DB)]
+
+  %% User ↔ Gateway
+  User -->|HTTP/REST| Gateway
+  Admin -->|HTTP/REST| Gateway
+
+  %% Gateway ↔ Services (TCP)
+  Gateway -->|TCP| Auth
+  Gateway -->|TCP| Expense
+  Gateway -->|TCP| Budget
+  Gateway -->|TCP| Blog
+  Gateway -->|TCP| Sub
+  Gateway -->|TCP| Notif
+  Gateway -->|TCP| OCR
+  Gateway -->|TCP| AI
+
+  %% Internal service interactions
+  Budget -->|expense.summary| Expense
+  AI -->|read data| Expense
+  AI -->|read data| Budget
+  Budget -.->|budget alerts| Notif
+  OCR -.->|job completed| Notif
+  AI -.->|insight alerts| Notif
+
+  %% Service ↔ DB
+  Auth --> DBAuth
+  Expense --> DBExp
+  Budget --> DBBud
+  Blog --> DBBlog
+  Sub --> DBSub
+  Notif --> DBNotif
+  OCR --> DBOCR
+  AI --> DBAI
+
+  %% External deps
+  Auth -->|send OTP| Email
+  OCR -->|store files| Storage
+  Gateway -->|upload files| Storage
+  OCR -->|enqueue/dequeue| Queue
+```
+
+### 0b. Product Overview (Value & Channels)
+
+```mermaid
+graph TB
+  %% Audiences & Channels
+  subgraph Channels
+    Web["Web App"]
+    Mobile["Mobile App"]
+    Docs["Public Docs / Blog"]
+    EmailTouch["Email / OTP / Alerts"]
+  end
+
+  subgraph Personas
+    PersonaUser["End User\n(Quản lý chi tiêu)"]
+    PersonaAdmin["Admin/Operator"]
+  end
+
+  subgraph FEPA["FEPA Platform"]
+    GatewayPO["API Gateway\nHTTP entrypoint"]
+    ExpensePO["Expenses"]
+    BudgetPO["Budgets"]
+    AI_PO["AI Insights"]
+    OCR_PO["OCR Receipts"]
+    BlogPO["Blog / Content"]
+    SubPO["Subscriptions"]
+    NotifPO["Notifications"]
+    AuthPO["Auth"]
+  end
+
+  Billing["Payment/Plans"]
+  StoragePO["Object Storage"]
+  EmailPO["Email Service"]
+
+  %% Channels to Personas
+  PersonaUser --> Web
+  PersonaUser --> Mobile
+  PersonaUser --> Docs
+  PersonaAdmin --> Web
+
+  %% Channels into platform
+  Web --> GatewayPO
+  Mobile --> GatewayPO
+  Docs --> BlogPO
+  EmailTouch --> EmailPO
+
+  %% Core flows
+  GatewayPO --> AuthPO
+  GatewayPO --> ExpensePO
+  GatewayPO --> BudgetPO
+  GatewayPO --> AI_PO
+  GatewayPO --> OCR_PO
+  GatewayPO --> SubPO
+  GatewayPO --> NotifPO
+  GatewayPO --> BlogPO
+
+  ExpensePO --> AI_PO
+  BudgetPO --> AI_PO
+  BudgetPO -.-> NotifPO
+  OCR_PO -.-> NotifPO
+  AI_PO -.-> NotifPO
+
+  %% External services
+  OCR_PO --> StoragePO
+  GatewayPO --> StoragePO
+  AuthPO --> EmailPO
+  NotifPO --> EmailPO
+  SubPO --> Billing
+```
+
+## 1b. Use Case Diagram (Overview)
+
+```mermaid
+graph LR
+  %% Orientation: actors on the left, domains spread horizontally
+
+  %% Actors
+  Guest((Guest))
+  User((User))
+  Admin((Admin))
+  System((System))
+
+  %% Auth
+  subgraph AUTH[Authentication]
+    UC_REG[Đăng ký tài khoản mới]
+    UC_VERIFY[Xác thực OTP email]
+    UC_LOGIN[Đăng nhập]
+    UC_REFRESH[Làm mới phiên]
+    UC_PROFILE[Xem hồ sơ cá nhân]
+    UC_FORGOT[Yêu cầu đặt lại mật khẩu]
+    UC_RESET[Đặt lại mật khẩu bằng OTP]
+  end
+
+  %% Expense
+  subgraph EXP[Expenses]
+    UC_EXP_CREATE[Thêm khoản chi]
+    UC_EXP_LIST[Xem danh sách chi tiêu]
+    UC_EXP_DETAIL[Xem chi tiết khoản chi]
+    UC_EXP_UPDATE[Cập nhật khoản chi]
+    UC_EXP_DELETE[Xóa khoản chi]
+    UC_EXP_SUM[Tổng hợp chi tiêu]
+    UC_EXP_CAT[Xem danh mục chi tiêu]
+  end
+
+  %% Budget
+  subgraph BUD[Budgets]
+    UC_BUD_CREATE[Tạo ngân sách]
+    UC_BUD_LIST[Xem danh sách ngân sách]
+    UC_BUD_DETAIL[Xem chi tiết ngân sách]
+    UC_BUD_UPDATE[Chỉnh sửa ngân sách]
+    UC_BUD_DELETE[Xóa ngân sách]
+    UC_BUD_PROGRESS[Theo dõi tiến độ ngân sách]
+  end
+
+  %% Subscription
+  subgraph SUBS[Subscriptions]
+    UC_SUB_PLANS[Xem các gói dịch vụ]
+    UC_SUB_CURRENT[Xem gói hiện tại]
+    UC_SUB_SUB[Đăng ký gói]
+    UC_SUB_CANCEL[Hủy gói]
+    UC_SUB_HISTORY[Xem lịch sử thanh toán]
+  end
+
+  %% Blog/CMS
+  subgraph BLOG[Blog / CMS]
+    UC_BLOG_LIST[Đọc danh sách bài viết]
+    UC_BLOG_DETAIL[Đọc chi tiết bài viết]
+    UC_BLOG_CREATE[Tạo bài viết mới]
+    UC_BLOG_UPDATE[Cập nhật bài viết]
+    UC_BLOG_DELETE[Xóa bài viết]
+  end
+
+  %% OCR
+  subgraph OCR[OCR]
+    UC_OCR_SCAN[Quét hóa đơn]
+    UC_OCR_HISTORY[Xem lịch sử quét]
+    UC_OCR_DETAIL[Xem kết quả OCR]
+  end
+
+  %% AI Insights
+  subgraph AI[AI Insights]
+    UC_AI_INSIGHTS[Nhận phân tích chi tiêu]
+    UC_AI_PRED[Nhận dự đoán chi tiêu]
+    UC_AI_CAT[Đề xuất phân loại tự động]
+  end
+
+  %% Notifications
+  subgraph NOTIF[Notifications]
+    UC_NOTIF_LIST[Xem thông báo]
+    UC_NOTIF_READ[Đánh dấu đã đọc]
+    UC_NOTIF_READALL[Đánh dấu tất cả đã đọc]
+    UC_NOTIF_CREATE[Tạo thông báo hệ thống]
+  end
+
+  %% Actor to use case links
+  Guest --> UC_REG
+  Guest --> UC_LOGIN
+  Guest --> UC_FORGOT
+  Guest --> UC_BLOG_LIST
+  Guest --> UC_BLOG_DETAIL
+  Guest --> UC_SUB_PLANS
+  Guest --> UC_EXP_CAT
+
+  User --> UC_VERIFY
+  User --> UC_REFRESH
+  User --> UC_PROFILE
+  User --> UC_RESET
+
+  User --> UC_EXP_CREATE
+  User --> UC_EXP_LIST
+  User --> UC_EXP_DETAIL
+  User --> UC_EXP_UPDATE
+  User --> UC_EXP_DELETE
+  User --> UC_EXP_SUM
+  User --> UC_EXP_CAT
+
+  User --> UC_BUD_CREATE
+  User --> UC_BUD_LIST
+  User --> UC_BUD_DETAIL
+  User --> UC_BUD_UPDATE
+  User --> UC_BUD_DELETE
+  User --> UC_BUD_PROGRESS
+
+  User --> UC_SUB_CURRENT
+  User --> UC_SUB_SUB
+  User --> UC_SUB_CANCEL
+  User --> UC_SUB_HISTORY
+
+  User --> UC_OCR_SCAN
+  User --> UC_OCR_HISTORY
+  User --> UC_OCR_DETAIL
+
+  User --> UC_AI_INSIGHTS
+  User --> UC_AI_PRED
+  User --> UC_AI_CAT
+
+  User --> UC_NOTIF_LIST
+  User --> UC_NOTIF_READ
+  User --> UC_NOTIF_READALL
+
+  Admin --> UC_BLOG_CREATE
+  Admin --> UC_BLOG_UPDATE
+  Admin --> UC_BLOG_DELETE
+  Admin --> UC_PROFILE
+
+  System --> UC_NOTIF_CREATE
+
+  %% Internal relationships (optional includes/extensions)
+  UC_REG -.-> UC_VERIFY
+  UC_FORGOT -.-> UC_RESET
+  UC_BUD_PROGRESS -.-> UC_EXP_SUM
+  UC_AI_INSIGHTS -.-> UC_EXP_SUM
+  UC_AI_INSIGHTS -.-> UC_BUD_LIST
+  UC_AI_PRED -.-> UC_EXP_SUM
+  UC_AI_CAT -.-> UC_EXP_LIST
+```
+
 ```mermaid
 graph TB
     Client[Client (Web/Mobile)]
