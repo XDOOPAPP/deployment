@@ -11,6 +11,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
       - AUTH_SERVICE_HOST=auth-service
       - AUTH_SERVICE_PORT=3001
       - EXPENSE_SERVICE_HOST=expense-service
@@ -28,14 +29,24 @@ services:
       - AI_SERVICE_HOST=ai-service
       - AI_SERVICE_PORT=3008
     depends_on:
-      - auth-service
-      - expense-service
-      - budget-service
-      - blog-service
-      - subscription-service
-      - notification-service
-      - ocr-service
-      - ai-service
+      rabbitmq:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      expense-service:
+        condition: service_started
+      budget-service:
+        condition: service_started
+      blog-service:
+        condition: service_started
+      subscription-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      ocr-service:
+        condition: service_started
+      ai-service:
+        condition: service_started
     networks:
       - fepa-network
 
@@ -50,6 +61,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3001
       - HTTP_PORT=4001
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -64,6 +79,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3002
       - HTTP_PORT=4002
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -78,6 +97,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3003
       - HTTP_PORT=4003
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -93,7 +116,10 @@ services:
       - TCP_PORT=3004
       - HTTP_PORT=4004
       - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_db?schema=blog
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      rabbitmq:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     networks:
@@ -110,6 +136,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3005
       - HTTP_PORT=4005
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -124,6 +154,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3006
       - HTTP_PORT=4006
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -138,6 +172,10 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3007
       - HTTP_PORT=4007
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
 
@@ -152,8 +190,31 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3008
       - HTTP_PORT=4008
+      - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - fepa-network
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: fepa-rabbitmq
+    ports:
+      - "5672:5672" # AMQP port
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=fepa
+      - RABBITMQ_DEFAULT_PASS=fepa123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - fepa-network
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
     image: postgres:15-alpine
@@ -169,7 +230,7 @@ services:
     networks:
       - fepa-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U fepa"]
+      test: [ "CMD-SHELL", "pg_isready -U fepa" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -197,3 +258,4 @@ networks:
 volumes:
   postgres_data:
   pgadmin_data:
+  rabbitmq_data:
