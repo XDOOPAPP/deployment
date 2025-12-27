@@ -61,8 +61,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3001
       - HTTP_PORT=4001
+      - MONGODB_URI=mongodb://fepa:fepa123@mongodb:27017/fepa_auth?authSource=admin
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      mongodb:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -79,8 +82,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3002
       - HTTP_PORT=4002
+      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_expense
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      postgres:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -97,8 +103,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3003
       - HTTP_PORT=4003
+      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_budget
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      postgres:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -115,12 +124,12 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3004
       - HTTP_PORT=4004
-      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_db?schema=blog
+      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_blog
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     networks:
       - fepa-network
@@ -136,8 +145,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3005
       - HTTP_PORT=4005
+      - MONGODB_URI=mongodb://fepa:fepa123@mongodb:27017/fepa_subscription?authSource=admin
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      mongodb:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -154,8 +166,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3006
       - HTTP_PORT=4006
+      - MONGODB_URI=mongodb://fepa:fepa123@mongodb:27017/fepa_notification?authSource=admin
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      mongodb:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -172,8 +187,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3007
       - HTTP_PORT=4007
+      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_ocr
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      postgres:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -190,8 +208,11 @@ services:
       - NODE_ENV=development
       - TCP_PORT=3008
       - HTTP_PORT=4008
+      - DATABASE_URL=postgresql://fepa:fepa123@postgres:5432/fepa_ai
       - RABBITMQ_URL=amqp://fepa:fepa123@rabbitmq:5672
     depends_on:
+      postgres:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -227,10 +248,30 @@ services:
       - POSTGRES_DB=fepa_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
     networks:
       - fepa-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U fepa" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7-jammy
+    container_name: fepa-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=fepa
+      - MONGO_INITDB_ROOT_PASSWORD=fepa123
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    networks:
+      - fepa-network
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -257,5 +298,6 @@ networks:
 
 volumes:
   postgres_data:
+  mongodb_data:
   pgadmin_data:
   rabbitmq_data:
