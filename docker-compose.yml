@@ -36,7 +36,7 @@ services:
     environment:
       - POSTGRES_USER=fepa
       - POSTGRES_PASSWORD=fepa123
-      - POSTGRES_DB=fepa_db
+      - POSTGRES_DB=fepa
       - POSTGRES_MULTIPLE_DATABASES=fepa_expense,fepa_budget,fepa_blog,fepa_ocr,fepa_ai
     volumes:
       - postgres_data:/var/lib/postgresql/data
